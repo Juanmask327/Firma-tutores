@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Firma del Tutor — Coformación Empresarial</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f2f5; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 16px; padding: 40px 36px;
+      width: 100%; max-width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .logo-circle {
+      width: 42px; height: 42px; background: #1a3557; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .logo-circle svg { width: 22px; height: 22px; fill: #fff; }
+    .header-text h1 { font-size: 17px; font-weight: 700; color: #1a3557; line-height: 1.2; }
+    .header-text p  { font-size: 12px; color: #8a96a3; margin-top: 2px; }
+    .divider { height: 1px; background: #edf0f4; margin-bottom: 28px; }
+    .step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+    .step-num {
+      width: 24px; height: 24px; background: #1a3557; color: #fff;
+      font-size: 12px; font-weight: 700; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 7px; }
+    input[type="text"] {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid #d1d5db; border-radius: 10px;
+      font-size: 15px; font-family: 'Courier New', monospace;
+      font-weight: 600; letter-spacing: 1px; color: #1a3557;
+      outline: none; transition: border-color .2s, box-shadow .2s; text-transform: uppercase;
+    }
+    input[type="text"]::placeholder { font-weight: 400; letter-spacing: 0; color: #b0b8c1; font-family: 'Segoe UI', sans-serif; }
+    input[type="text"]:focus { border-color: #1a3557; box-shadow: 0 0 0 3px rgba(26,53,87,.10); }
+
+    .firma-badge {
+      display: none; align-items: center; gap: 8px;
+      background: #ecfdf5; border: 1px solid #a7f3d0;
+      border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;
+      font-size: 13px; color: #065f46;
+    }
+    .firma-badge.visible { display: flex; }
+    .firma-badge strong { flex: 1; }
+    .firma-badge button {
+      background: none; border: none; color: #065f46;
+      font-size: 12px; cursor: pointer; text-decoration: underline; padding: 0;
+    }
+
+    .canvas-wrap {
+      border: 1.5px solid #d1d5db; border-radius: 10px;
+      overflow: hidden; background: #fafbfc;
+      position: relative; cursor: crosshair; touch-action: none;
+    }
+    .canvas-wrap.guardada { border-color: #6ee7b7; background: #f0fdf9; }
+    canvas { display: block; width: 100%; }
+    .canvas-hint {
+      position: absolute; bottom: 8px; left: 0; right: 0;
+      text-align: center; font-size: 11px; color: #c0c8d0;
+      pointer-events: none; transition: opacity .3s;
+    }
+    .canvas-hint.oculto { opacity: 0; }
+
+    .acciones { display: flex; gap: 8px; margin-top: 10px; margin-bottom: 24px; }
+    .btn-limpiar {
+      padding: 9px 14px; border: 1.5px solid #d1d5db; border-radius: 8px;
+      background: #fff; color: #6b7280; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: background .15s; white-space: nowrap;
+    }
+    .btn-limpiar:hover { background: #f3f4f6; }
+    .btn-redibujar {
+      padding: 9px 14px; border: 1.5px solid #059669; border-radius: 8px;
+      background: #fff; color: #059669; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: background .15s; white-space: nowrap; display: none;
+    }
+    .btn-redibujar:hover { background: #ecfdf5; }
+    .btn-enviar {
+      flex: 1; padding: 12px; border: none; border-radius: 10px;
+      background: #1a3557; color: #fff; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: background .2s, transform .1s;
+    }
+    .btn-enviar:hover:not(:disabled)  { background: #243f6e; }
+    .btn-enviar:active:not(:disabled) { transform: scale(.98); }
+    .btn-enviar:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .msg {
+      display: none; margin-top: 18px; padding: 14px 16px;
+      border-radius: 10px; font-size: 14px; line-height: 1.5; text-align: center;
+    }
+    .msg.ok  { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .msg.err { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+      border-radius: 50%; animation: spin .7s linear infinite;
+      margin-right: 8px; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .footer { margin-top: 28px; text-align: center; font-size: 11px; color: #b0b8c1; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="logo-circle">
+      <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>Firma del Tutor</h1>
+      <p>Uniempresarial — Coformación Empresarial</p>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <label for="codigo">Código del acta</label>
+      <input type="text" id="codigo" placeholder="ACT-2025-001" maxlength="16" />
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <label>Tu firma</label>
+      <div class="firma-badge" id="firmaBadge">
+        <span>✅</span>
+        <strong>Firma guardada cargada automáticamente</strong>
+        <button onclick="pedirRedibujar()">Cambiar</button>
+      </div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="canvas" height="150"></canvas>
+        <span class="canvas-hint" id="hint">Dibuja aquí tu firma con el dedo o el mouse</span>
+      </div>
+      <div class="acciones">
+        <button class="btn-limpiar"   id="btnLimpiar"   onclick="limpiar()">Limpiar</button>
+        <button class="btn-redibujar" id="btnRedibujar" onclick="restaurarGuardada()">Restaurar guardada</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-enviar" id="btnEnviar" onclick="enviar()">Registrar firma</button>
+  <div class="msg" id="msg"></div>
+  <div class="footer">Tus datos están protegidos · Uniempresarial</div>
+</div>
+
+<script>
+  const APPS_SCRIPT_URL = 'PEGA_AQUI_LA_URL_DEL_APPS_SCRIPT';
+  const STORAGE_KEY     = 'coformacion_firma_tutor';
+
+  const canvas     = document.getElementById('canvas');
+  const ctx        = canvas.getContext('2d');
+  const hint       = document.getElementById('hint');
+  const badge      = document.getElementById('firmaBadge');
+  const canvasWrap = document.getElementById('canvasWrap');
+  const btnRedibujar = document.getElementById('btnRedibujar');
+
+  let dibujando     = false;
+  let haFirmado     = false;
+  let firmaGuardada = null;
+
+  // ── Canvas ─────────────────────────────────────────────────
+  function initCanvas() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = 150;
+    ctx.strokeStyle = '#1a3557';
+    ctx.lineWidth   = 2.5;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+  }
+
+  // ── Caché ──────────────────────────────────────────────────
+  function cargarFirmaGuardada() {
+    try {
+      const guardada = localStorage.getItem(STORAGE_KEY);
+      if (!guardada) return;
+      firmaGuardada = guardada;
+      const img = new Image();
+      img.onload = () => {
+        initCanvas();
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        haFirmado = true;
+        hint.classList.add('oculto');
+        badge.classList.add('visible');
+        canvasWrap.classList.add('guardada');
+      };
+      img.src = guardada;
+    } catch(e) { /* localStorage no disponible */ }
+  }
+
+  function guardarEnCache(base64) {
+    try { localStorage.setItem(STORAGE_KEY, base64); firmaGuardada = base64; } catch(e) {}
+  }
+
+  function pedirRedibujar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    haFirmado = false;
+    hint.classList.remove('oculto');
+    badge.classList.remove('visible');
+    canvasWrap.classList.remove('guardada');
+    btnRedibujar.style.display = firmaGuardada ? 'block' : 'none';
+    ocultarMensaje();
+  }
+
+  function restaurarGuardada() {
+    if (!firmaGuardada) return;
+    const img = new Image();
+    img.onload = () => {
+      initCanvas();
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      haFirmado = true;
+      hint.classList.add('oculto');
+      badge.classList.add('visible');
+      canvasWrap.classList.add('guardada');
+      btnRedibujar.style.display = 'none';
+    };
+    img.src = firmaGuardada;
+  }
+
+  function limpiar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    haFirmado = false;
+    hint.classList.remove('oculto');
+    badge.classList.remove('visible');
+    canvasWrap.classList.remove('guardada');
+    btnRedibujar.style.display = firmaGuardada ? 'block' : 'none';
+    ocultarMensaje();
+  }
+
+  // ── Dibujar ────────────────────────────────────────────────
+  function getXY(e) {
+    const r = canvas.getBoundingClientRect();
+    const s = e.touches ? e.touches[0] : e;
+    return {
+      x: (s.clientX - r.left) * (canvas.width  / r.width),
+      y: (s.clientY - r.top)  * (canvas.height / r.height),
+    };
+  }
+  function iniciar(e) {
+    dibujando = true; haFirmado = true;
+    hint.classList.add('oculto');
+    badge.classList.remove('visible');
+    canvasWrap.classList.remove('guardada');
+    const p = getXY(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+  }
+  function dibujar(e) {
+    if (!dibujando) return; e.preventDefault();
+    const p = getXY(e); ctx.lineTo(p.x, p.y); ctx.stroke();
+  }
+  function detener() { dibujando = false; }
+
+  canvas.addEventListener('mousedown',  iniciar);
+  canvas.addEventListener('mousemove',  dibujar);
+  canvas.addEventListener('mouseup',    detener);
+  canvas.addEventListener('mouseleave', detener);
+  canvas.addEventListener('touchstart', iniciar, { passive: false });
+  canvas.addEventListener('touchmove',  dibujar, { passive: false });
+  canvas.addEventListener('touchend',   detener);
+
+  // ── UI ─────────────────────────────────────────────────────
+  function mostrarMensaje(texto, tipo) {
+    const el = document.getElementById('msg');
+    el.innerHTML = texto; el.className = `msg ${tipo}`; el.style.display = 'block';
+  }
+  function ocultarMensaje() { document.getElementById('msg').style.display = 'none'; }
+  function canvasVacio() {
+    return !ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(v => v !== 0);
+  }
+
+  // ── Envío ──────────────────────────────────────────────────
+  async function enviar() {
+    ocultarMensaje();
+    const codigo = document.getElementById('codigo').value.trim().toUpperCase();
+
+    if (!codigo) { mostrarMensaje('Por favor ingresa el código del acta.', 'err'); return; }
+    if (!/^ACT-\d{4}-\d{3}$/.test(codigo)) {
+      mostrarMensaje('El código debe tener el formato <strong>ACT-2025-001</strong>.', 'err'); return;
+    }
+    if (canvasVacio()) { mostrarMensaje('Por favor dibuja tu firma antes de continuar.', 'err'); return; }
+
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Enviando…';
+
+    const firmaBase64 = canvas.toDataURL('image/png');
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'firmarTutor', codigoActa: codigo, firmaBase64 }),
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        guardarEnCache(firmaBase64); // Guardar en caché tras éxito
+
+        mostrarMensaje(
+          '✅ <strong>¡Firma registrada!</strong><br>' +
+          'Insertada en los documentos del acta <strong>' + codigo + '</strong>.<br>' +
+          '<small style="color:#047857">Tu firma quedó guardada para futuros registros.</small>',
+          'ok'
+        );
+        document.getElementById('codigo').value = '';
+        badge.classList.add('visible');
+        canvasWrap.classList.add('guardada');
+      } else {
+        mostrarMensaje('❌ ' + (data.error || 'No se pudo registrar la firma.'), 'err');
+      }
+    } catch(e) {
+      mostrarMensaje('❌ Error de conexión. Verifica tu internet e intenta de nuevo.', 'err');
+    } finally {
+      btn.disabled = false; btn.innerHTML = 'Registrar firma';
+    }
+  }
+
+  // ── Resize ─────────────────────────────────────────────────
+  window.addEventListener('resize', () => {
+    const img = new Image(); img.src = canvas.toDataURL();
+    img.onload = () => { initCanvas(); if (haFirmado) ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+  });
+
+  // ── Arranque ───────────────────────────────────────────────
+  initCanvas();
+  cargarFirmaGuardada();
+</script>
+</body>
+</html>
