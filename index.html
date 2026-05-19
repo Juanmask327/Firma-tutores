@@ -25,7 +25,6 @@
     .header-text p  { font-size: 12px; color: #8a96a3; margin-top: 2px; }
     .divider { height: 1px; background: #edf0f4; margin-bottom: 24px; }
 
-    /* ── Pasos ── */
     .step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 22px; }
     .step-num {
       width: 24px; height: 24px; background: #1a3557; color: #fff;
@@ -34,9 +33,8 @@
       flex-shrink: 0; margin-top: 2px;
     }
     .step-body { flex: 1; }
-    label.field-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 7px; }
+    .field-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 7px; }
 
-    /* ── Input código ── */
     input[type="text"] {
       width: 100%; padding: 11px 14px;
       border: 1.5px solid #d1d5db; border-radius: 10px;
@@ -47,10 +45,8 @@
     input[type="text"]::placeholder { font-weight: 400; letter-spacing: 0; color: #b0b8c1; font-family: 'Segoe UI', sans-serif; }
     input[type="text"]:focus { border-color: #1a3557; box-shadow: 0 0 0 3px rgba(26,53,87,.10); }
 
-    /* ── Selección de documentos ── */
-    .docs-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px;
-    }
+    /* ── Documentos ── */
+    .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .doc-check {
       display: flex; align-items: center; gap: 8px;
       background: #f8fafc; border: 1.5px solid #e2e8f0;
@@ -60,33 +56,28 @@
     }
     .doc-check:hover { border-color: #1a3557; background: #EAF0FA; }
     .doc-check.selected { border-color: #1a3557; background: #EAF0FA; }
-    .doc-check input[type="checkbox"] { display: none; }
-    .doc-check .check-box {
+    .check-box {
       width: 18px; height: 18px; border: 2px solid #d1d5db;
       border-radius: 4px; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all .2s; background: #fff;
+      flex-shrink: 0; transition: all .2s; background: #fff; position: relative;
     }
     .doc-check.selected .check-box { border-color: #1a3557; background: #1a3557; }
-    .doc-check .check-box::after {
+    .check-box::after {
       content: ''; width: 10px; height: 6px;
       border-left: 2px solid #fff; border-bottom: 2px solid #fff;
-      transform: rotate(-45deg) translateY(-1px);
-      display: none;
+      transform: rotate(-45deg) translateY(-1px); display: none;
     }
     .doc-check.selected .check-box::after { display: block; }
     .doc-check span { font-size: 12px; font-weight: 500; color: #374151; line-height: 1.3; }
     .doc-check.selected span { color: #1a3557; }
-
-    .sel-actions {
-      display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px;
-    }
+    .sel-actions { display: flex; gap: 10px; margin-top: 8px; }
     .sel-actions button {
       font-size: 11px; color: #6b7280; background: none;
       border: none; cursor: pointer; text-decoration: underline; padding: 0;
     }
     .sel-actions button:hover { color: #1a3557; }
 
-    /* ── Firma guardada ── */
+    /* ── Firma ── */
     .firma-badge {
       display: none; align-items: center; gap: 8px;
       background: #ecfdf5; border: 1px solid #a7f3d0;
@@ -97,7 +88,6 @@
     .firma-badge strong { flex: 1; }
     .firma-badge button { background: none; border: none; color: #065f46; font-size: 12px; cursor: pointer; text-decoration: underline; }
 
-    /* ── Canvas ── */
     .canvas-wrap {
       border: 1.5px solid #d1d5db; border-radius: 10px;
       overflow: hidden; background: #fafbfc;
@@ -116,11 +106,11 @@
     .btn-sec {
       padding: 9px 14px; border: 1.5px solid #d1d5db; border-radius: 8px;
       background: #fff; color: #6b7280; font-size: 13px; font-weight: 500;
-      cursor: pointer; transition: background .15s; white-space: nowrap;
+      cursor: pointer; white-space: nowrap;
     }
     .btn-sec:hover { background: #f3f4f6; }
-    .btn-sec.verde { border-color: #059669; color: #059669; display: none; }
-    .btn-sec.verde:hover { background: #ecfdf5; }
+    .btn-verde { border-color: #059669; color: #059669; display: none; }
+    .btn-verde:hover { background: #ecfdf5; }
 
     .btn-enviar {
       width: 100%; padding: 13px; border: none; border-radius: 10px;
@@ -137,7 +127,6 @@
     }
     .msg.ok  { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
     .msg.err { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
-    .msg.warn{ background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
 
     .spinner {
       display: inline-block; width: 14px; height: 14px;
@@ -162,7 +151,7 @@
   </div>
   <div class="divider"></div>
 
-  <!-- Paso 1: Código -->
+  <!-- Paso 1 -->
   <div class="step">
     <div class="step-num">1</div>
     <div class="step-body">
@@ -171,36 +160,26 @@
     </div>
   </div>
 
-  <!-- Paso 2: Documentos -->
+  <!-- Paso 2 -->
   <div class="step">
     <div class="step-num">2</div>
     <div class="step-body">
       <label class="field-label">Documentos a firmar</label>
-      <div class="docs-grid" id="docsGrid">
+      <div class="docs-grid">
         <div class="doc-check selected" data-key="actaInicio" onclick="toggleDoc(this)">
-          <input type="checkbox" checked/>
-          <div class="check-box"></div>
-          <span>Acta de Inicio</span>
+          <div class="check-box"></div><span>Acta de Inicio</span>
         </div>
         <div class="doc-check selected" data-key="actaSeguimiento" onclick="toggleDoc(this)">
-          <input type="checkbox" checked/>
-          <div class="check-box"></div>
-          <span>Acta de Seguimiento</span>
+          <div class="check-box"></div><span>Acta de Seguimiento</span>
         </div>
         <div class="doc-check selected" data-key="actaCierre" onclick="toggleDoc(this)">
-          <input type="checkbox" checked/>
-          <div class="check-box"></div>
-          <span>Acta de Cierre</span>
+          <div class="check-box"></div><span>Acta de Cierre</span>
         </div>
         <div class="doc-check selected" data-key="planActividades" onclick="toggleDoc(this)">
-          <input type="checkbox" checked/>
-          <div class="check-box"></div>
-          <span>Plan de Actividades</span>
+          <div class="check-box"></div><span>Plan de Actividades</span>
         </div>
         <div class="doc-check selected" data-key="evalTutor" onclick="toggleDoc(this)">
-          <input type="checkbox" checked/>
-          <div class="check-box"></div>
-          <span>Evaluación del Tutor</span>
+          <div class="check-box"></div><span>Evaluación del Tutor</span>
         </div>
       </div>
       <div class="sel-actions">
@@ -211,7 +190,7 @@
     </div>
   </div>
 
-  <!-- Paso 3: Firma -->
+  <!-- Paso 3 -->
   <div class="step">
     <div class="step-num">3</div>
     <div class="step-body">
@@ -227,7 +206,7 @@
       </div>
       <div class="acciones">
         <button class="btn-sec" onclick="limpiar()">Limpiar</button>
-        <button class="btn-sec verde" id="btnRestaurar" onclick="restaurarGuardada()">Restaurar guardada</button>
+        <button class="btn-sec btn-verde" id="btnRestaurar" onclick="restaurarGuardada()">Restaurar guardada</button>
       </div>
     </div>
   </div>
@@ -238,7 +217,7 @@
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpkNiZaAgBPAh-A68bYVlPCVlJgJuvJSWirvEWbuXzfLVIhw-eJUY97MhM6Rvt7FqW7w/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYAKy4xgHiVpqP5zPnLSnInqLbyfqxSal-OUJGc_qi_EOciJAj7F4bgOMAfnQVUBf5lw/exec';
   const STORAGE_KEY     = 'coformacion_firma_tutor';
 
   const canvas       = document.getElementById('canvas');
@@ -260,6 +239,19 @@
     ctx.lineWidth   = 2.5;
     ctx.lineCap     = 'round';
     ctx.lineJoin    = 'round';
+  }
+
+  // ── Compresión ─────────────────────────────────────────────
+  // Reduce la firma a 300x80px en JPEG calidad 0.4 → menos de 8KB
+  function comprimirFirma() {
+    const temp = document.createElement('canvas');
+    temp.width  = 300;
+    temp.height = 80;
+    const tCtx = temp.getContext('2d');
+    tCtx.fillStyle = '#ffffff';
+    tCtx.fillRect(0, 0, 300, 80);
+    tCtx.drawImage(canvas, 0, 0, 300, 80);
+    return temp.toDataURL('image/jpeg', 0.4);
   }
 
   // ── Caché ──────────────────────────────────────────────────
@@ -350,22 +342,12 @@
   canvas.addEventListener('touchmove',  dibujar, { passive: false });
   canvas.addEventListener('touchend',   detener);
 
-  // ── Selección de documentos ────────────────────────────────
-  function toggleDoc(el) {
-    el.classList.toggle('selected');
-  }
-
-  function seleccionarTodos() {
-    document.querySelectorAll('.doc-check').forEach(el => el.classList.add('selected'));
-  }
-
-  function deseleccionarTodos() {
-    document.querySelectorAll('.doc-check').forEach(el => el.classList.remove('selected'));
-  }
-
+  // ── Selección documentos ────────────────────────────────────
+  function toggleDoc(el) { el.classList.toggle('selected'); }
+  function seleccionarTodos()   { document.querySelectorAll('.doc-check').forEach(el => el.classList.add('selected')); }
+  function deseleccionarTodos() { document.querySelectorAll('.doc-check').forEach(el => el.classList.remove('selected')); }
   function getDocumentosSeleccionados() {
-    return Array.from(document.querySelectorAll('.doc-check.selected'))
-                .map(el => el.dataset.key);
+    return Array.from(document.querySelectorAll('.doc-check.selected')).map(el => el.dataset.key);
   }
 
   // ── UI ─────────────────────────────────────────────────────
@@ -378,7 +360,7 @@
     return !ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(v => v !== 0);
   }
 
-  // ── Envío via GET (evita CORS) ─────────────────────────────
+  // ── Envío ──────────────────────────────────────────────────
   async function enviar() {
     ocultarMensaje();
 
@@ -401,14 +383,22 @@
     const btn = document.getElementById('btnEnviar');
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Enviando…';
 
-    const firmaBase64 = canvas.toDataURL('image/png');
+    // Comprimir firma antes de enviar → menos de 8KB
+    const firmaComprimida = comprimirFirma();
 
-    // Enviamos via GET con no-cors para evitar el error 405
+    const nombresDoc = {
+      actaInicio:      'Acta de Inicio',
+      actaSeguimiento: 'Acta de Seguimiento',
+      actaCierre:      'Acta de Cierre',
+      planActividades: 'Plan de Actividades',
+      evalTutor:       'Evaluación del Tutor',
+    };
+
     const params = new URLSearchParams({
       action:      'firmarTutor',
       codigoActa:  codigo,
       documentos:  docs.join(','),
-      firmaBase64: firmaBase64,
+      firmaBase64: firmaComprimida,
     });
 
     try {
@@ -417,21 +407,13 @@
         mode:   'no-cors',
       });
 
-      // Con no-cors no podemos leer la respuesta, asumimos éxito
-      guardarEnCache(firmaBase64);
+      // Guardar en caché la firma original (mayor calidad para visualización)
+      guardarEnCache(canvas.toDataURL('image/png'));
 
-      const nombresDoc = {
-        actaInicio:      'Acta de Inicio',
-        actaSeguimiento: 'Acta de Seguimiento',
-        actaCierre:      'Acta de Cierre',
-        planActividades: 'Plan de Actividades',
-        evalTutor:       'Evaluación del Tutor',
-      };
       const listaFirmada = docs.map(k => nombresDoc[k]).join(', ');
-
       mostrarMensaje(
         '✅ <strong>¡Firma enviada correctamente!</strong><br>' +
-        'Documentos firmados: <strong>' + listaFirmada + '</strong><br>' +
+        'Documentos: <strong>' + listaFirmada + '</strong><br>' +
         '<small style="color:#047857">La firma aparecerá en los documentos en unos momentos.</small>',
         'ok'
       );
@@ -450,7 +432,10 @@
   // ── Resize ─────────────────────────────────────────────────
   window.addEventListener('resize', () => {
     const img = new Image(); img.src = canvas.toDataURL();
-    img.onload = () => { initCanvas(); if (haFirmado) ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+    img.onload = () => {
+      initCanvas();
+      if (haFirmado) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
   });
 
   initCanvas();
